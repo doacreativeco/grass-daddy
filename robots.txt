@@ -1,0 +1,16 @@
+User-agent: *
+Allow: /
+Disallow: /login.html
+Disallow: /dashboard.html
+Disallow: /leads.html
+Disallow: /calendar.html
+Disallow: /billing.html
+Disallow: /prices.html
+Disallow: /customers.html
+Disallow: /estimates.html
+Disallow: /dist-mac/
+Disallow: /_shot-tool/
+Disallow: /logo-animations.html
+Disallow: /grass-daddy-mac.zip
+
+Sitemap: https://www.YOURDOMAIN.com/sitemap.xml

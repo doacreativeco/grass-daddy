@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com https://nominatim.openstreetmap.org; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src https://www.google.com https://maps.google.com https://www.openstreetmap.org; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Leads Dashboard — Grass Daddy Landscaping</title>
+<meta name="robots" content="noindex, nofollow">
+
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0A0B09">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/crm.css">
+</head>
+<body class="gd-app">
+
+<aside class="gd-sidebar" id="gdSidebar">
+  <a href="dashboard.html" class="gd-sidebar__brand" aria-label="Grass Daddy CRM">
+    <img src="assets/logo-transparent.png" alt="" class="gd-sidebar__logo" width="840" height="840" decoding="async">
+    <span><span class="gd-sidebar__brand-text">Grass Daddy</span><span class="gd-sidebar__brand-sub">Field CRM</span></span>
+  </a>
+  <nav class="gd-nav" aria-label="CRM">
+    <p class="gd-nav__label">Workspace</p>
+    <a href="dashboard.html" class="gd-nav__link leads-header__nav-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="14" y="3" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="14" y="12" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="3" y="16" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="1.8"/></svg>Dashboard</a>
+    <a href="calendar.html" class="gd-nav__link leads-header__nav-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Calendar</a>
+    <a href="customers.html" class="gd-nav__link leads-header__nav-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="9" cy="8" r="3.2" stroke="currentColor" stroke-width="1.8"/><path d="M4 19c.4-3.2 2.6-5 5-5s4.6 1.8 5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="17" cy="9" r="2.4" stroke="currentColor" stroke-width="1.8"/><path d="M16.2 14.2c1.8.3 3.3 1.6 3.8 4.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Customers</a>
+    <a href="leads.html" class="gd-nav__link leads-header__nav-link is-active" aria-current="page"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16v12H4V7Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M4 7l8 6 8-6" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Leads</a>
+    <p class="gd-nav__label">Money</p>
+    <a href="estimates.html" class="gd-nav__link leads-header__nav-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 3h8l5 5v13H7V3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M15 3v5h5M10 13h6M10 17h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Estimates</a>
+    <a href="billing.html" class="gd-nav__link leads-header__nav-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 3h12v18l-2-1.2-2 1.2-2-1.2-2 1.2-2-1.2-2 1.2V3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 8h6M9 12h6M9 16h3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Invoices</a>
+    <a href="prices.html" class="gd-nav__link leads-header__nav-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12.5 12.5 4H20v7.5L11.5 20 4 12.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="16.2" cy="7.8" r="1.4" fill="currentColor"/></svg>Price list</a>
+  </nav>
+  <div class="gd-sidebar__foot">
+    <button type="button" class="leads-header__settings" id="settingsBtn">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" stroke="currentColor" stroke-width="1.8"/><path d="M19.4 13.5a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.03 1.56V20a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.11-1.56 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.56-1.03H4a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.56-1.11 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34H10a1.7 1.7 0 0 0 1.03-1.56V4a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1.03 1.56 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87V10a1.7 1.7 0 0 0 1.56 1.03H20a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.56 1.03Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+      Settings
+    </button>
+    <button type="button" class="leads-header__logout" id="logoutBtn"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M8 4H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3M13 14l4-4-4-4M6 10h11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Log out</button>
+    <a href="index.html" class="leads-header__back"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12 4 6 10l6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to site</a>
+  </div>
+</aside>
+<div class="gd-sidebar-backdrop" id="gdSidebarBackdrop" hidden></div>
+
+<div class="gd-main">
+  <header class="gd-topbar">
+    <button type="button" class="gd-topbar__menu" id="gdMenuBtn" aria-label="Open menu" aria-controls="gdSidebar" aria-expanded="false">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </button>
+    <form class="gd-topbar__search" id="gdSearchForm" role="search">
+      <input type="search" id="gdSearch" placeholder="Search customers, jobs, invoices…" aria-label="Search">
+    </form>
+    <span class="gd-topbar__hint">Leads</span>
+  </header>
+
+<main class="leads">
+  <div class="leads__inner">
+
+    <div class="leads__top">
+      <div>
+        <p class="tag">INTERNAL TOOL</p>
+        <h1 class="leads__title">Leads Dashboard</h1>
+        <p class="leads__subtitle"><strong id="leadsTotalCount">0</strong> lead(s) in the pipeline. Booked jobs move to Customers.</p>
+      </div>
+      <div class="leads__top-actions">
+        <button type="button" class="leads__add-btn" id="addLeadBtn">+ Add lead</button>
+        <button type="button" class="leads__export-btn" id="exportBtn">Export CSV</button>
+        <button type="button" class="leads__seed-btn" id="seedBtn">Load preview leads</button>
+      </div>
+    </div>
+
+    <div class="leads__stats" id="statsRow"></div>
+
+    <section class="leads-new" id="new-leads" hidden>
+      <div class="leads-new__head">
+        <div>
+          <h2 class="leads-new__title">New leads</h2>
+          <p class="leads-new__lede">Uncontacted quote requests. Select one to see the property on the map.</p>
+        </div>
+        <span class="crm-panel__count" id="newLeadsCount">0</span>
+      </div>
+      <div class="leads-new__layout">
+        <div id="newLeadsList"></div>
+        <div class="prop-map" id="newLeadsMap" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <div class="leads__toolbar">
+      <input type="search" class="leads__search" id="searchInput" placeholder="Search name, phone, email, town…" aria-label="Search leads">
+      <div class="leads__toolbar-filters">
+        <label class="leads__sort">
+          <span>Status</span>
+          <select class="leads__sort-select" id="pipelineSelect" aria-label="Filter by status"></select>
+        </label>
+        <label class="leads__sort">
+          <span>Service</span>
+          <select class="leads__sort-select" id="categorySelect" aria-label="Filter by service"></select>
+        </label>
+        <label class="leads__sort">
+          <span>Sort by</span>
+          <select class="leads__sort-select" id="sortSelect" aria-label="Sort leads">
+            <option value="createdAt-desc">Newest first</option>
+            <option value="createdAt-asc">Oldest first</option>
+            <option value="name-asc">Name (A–Z)</option>
+            <option value="name-desc">Name (Z–A)</option>
+            <option value="estimatedValue-desc">Highest value</option>
+            <option value="estimatedValue-asc">Lowest value</option>
+            <option value="status-asc">Status</option>
+            <option value="followUpDate-asc">Follow-up soonest</option>
+          </select>
+        </label>
+      </div>
+    </div>
+
+    <div class="leads__cards" id="leadsCards"></div>
+
+    <div class="leads__empty" id="emptyState" hidden>
+      <p>No leads yet — they'll show up here once someone submits the quote form, or you add one manually.</p>
+      <button type="button" class="btn btn--solid" id="seedBtnEmpty">Load preview leads</button>
+    </div>
+
+  </div>
+</main>
+</div>
+
+<!-- ============ ADD / EDIT LEAD MODAL ============ -->
+<div class="lead-modal" id="leadModal" aria-hidden="true">
+  <div class="lead-modal__backdrop" data-lead-modal-close></div>
+  <div class="lead-modal__panel lead-modal__panel--wide" role="dialog" aria-modal="true" aria-labelledby="leadModalTitle">
+    <button type="button" class="lead-modal__close" data-lead-modal-close aria-label="Close">&times;</button>
+    <h3 id="leadModalTitle">Add a lead</h3>
+    <form class="form lead-modal__form" id="leadForm" novalidate>
+      <div class="form__fields">
+        <div class="form__row">
+          <label>
+            <span>Full name</span>
+            <input type="text" name="name" required maxlength="100" autocomplete="name" placeholder="Jane Smith">
+          </label>
+          <label>
+            <span>Phone</span>
+            <input type="tel" name="phone" maxlength="30" autocomplete="tel" placeholder="(860) 555-0123">
+          </label>
+        </div>
+        <div class="form__row">
+          <label>
+            <span>Email</span>
+            <input type="email" name="email" maxlength="120" autocomplete="email" placeholder="you@email.com">
+          </label>
+          <label>
+            <span>Town</span>
+            <input type="text" name="town" maxlength="100" autocomplete="address-level2" placeholder="e.g. Glastonbury, CT">
+          </label>
+        </div>
+        <div class="form__row">
+          <label>
+            <span>Street address</span>
+            <input type="text" name="address" maxlength="160" autocomplete="street-address" placeholder="e.g. 14 Oak Ridge Rd">
+          </label>
+          <label>
+            <span>Priority</span>
+            <select name="priority" id="leadFormPriority">
+              <option value="">Normal</option>
+              <option value="hot">Hot — call first</option>
+            </select>
+          </label>
+        </div>
+        <label>
+          <span>Property notes</span>
+          <input type="text" name="propertyNotes" maxlength="200" placeholder="Gate code, dog, parking, HOA…">
+        </label>
+        <div class="form__row">
+          <label>
+            <span>Category</span>
+            <select name="category" id="leadFormCategory"></select>
+          </label>
+          <label>
+            <span>Status</span>
+            <select name="status" id="leadFormStatus"></select>
+          </label>
+        </div>
+        <div class="form__row">
+          <label>
+            <span>Estimated value ($)</span>
+            <input type="number" name="estimatedValue" min="0" max="10000000" step="1" placeholder="e.g. 3200">
+          </label>
+          <label>
+            <span>Follow up on</span>
+            <input type="date" name="followUpDate">
+          </label>
+        </div>
+        <label>
+          <span>Notes</span>
+          <textarea name="message" rows="3" maxlength="2000" placeholder="How the lead came in, what they need, timeline..."></textarea>
+        </label>
+        <div class="activity-log" id="leadActivitySection" hidden>
+          <h4 class="activity-log__title">Activity</h4>
+          <p class="settings__hint">Calls, texts, quotes, and site visits stay on this lead.</p>
+          <ol class="activity-log__list" id="leadActivityList"></ol>
+        </div>
+      </div>
+      <button type="submit" class="btn btn--solid btn--block">Save lead</button>
+    </form>
+  </div>
+</div>
+
+<!-- ============ LOG ACTIVITY MODAL ============ -->
+<div class="lead-modal" id="activityModal" aria-hidden="true">
+  <div class="lead-modal__backdrop" data-activity-modal-close></div>
+  <div class="lead-modal__panel" role="dialog" aria-modal="true" aria-labelledby="activityModalTitle">
+    <button type="button" class="lead-modal__close" data-activity-modal-close aria-label="Close">&times;</button>
+    <h3 id="activityModalTitle">Log activity</h3>
+    <p class="settings__hint" id="activityModalHint">Keep a paper trail of calls, texts, quotes, and visits.</p>
+    <form class="form" id="activityForm" novalidate>
+      <div class="form__fields">
+        <label>
+          <span>Type</span>
+          <select name="type" id="activityType">
+            <option value="call">Called</option>
+            <option value="text">Texted</option>
+            <option value="quote">Sent a quote</option>
+            <option value="visit">Site visit</option>
+            <option value="note">Note</option>
+          </select>
+        </label>
+        <label>
+          <span>What happened</span>
+          <textarea name="text" rows="3" required maxlength="2000" placeholder="Left a voicemail, quoted $2,400 for weekly mowing…"></textarea>
+        </label>
+      </div>
+      <button type="submit" class="btn btn--solid btn--block">Save activity</button>
+    </form>
+  </div>
+</div>
+
+<div class="lead-modal" id="mapModal" aria-hidden="true">
+  <div class="lead-modal__backdrop" data-map-modal-close></div>
+  <div class="lead-modal__panel lead-modal__panel--wide" role="dialog" aria-modal="true" aria-labelledby="mapModalTitle">
+    <button type="button" class="lead-modal__close" data-map-modal-close aria-label="Close">&times;</button>
+    <h3 id="mapModalTitle">Property map</h3>
+    <div class="prop-map prop-map--modal" id="mapModalBody"></div>
+  </div>
+</div>
+
+<script src="js/auth-guard.js"></script>
+<script src="js/crm-shell.js"></script>
+<script src="js/modal-utils.js"></script>
+<script src="js/maps-utils.js"></script>
+<script src="js/work-convert.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/leads.js"></script>
+</body>
+</html>

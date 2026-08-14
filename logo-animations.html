@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grass Daddy — Logo Animation Concepts</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/logo-animations.css">
+</head>
+<body>
+
+<header class="lab__head">
+  <a href="index.html" class="lab__back">← Back to site</a>
+  <p class="lab__tag">GRASS DADDY — MOTION LAB</p>
+  <h1>Logo animation concepts.</h1>
+  <p class="lab__lede">Same exact mark, eight different ways to bring it to life. Each concept notes
+    where it's best used — hit replay to run it again, or hover where noted.</p>
+</header>
+
+<main class="lab__grid">
+
+  <!-- 01 — MOWER REVEAL -->
+  <section class="card" data-card="mower">
+    <div class="card__stage">
+      <div class="plate">
+        <img src="assets/logo.png" alt="Grass Daddy logo" class="anim anim--mower">
+        <span class="blade-head"></span>
+      </div>
+    </div>
+    <div class="card__info">
+      <p class="card__num">01</p>
+      <h2>Mower Reveal</h2>
+      <p>The mark gets "cut in" left to right, with a bright blade-line leading the wipe — like a first
+        pass across an overgrown lawn.</p>
+      <p class="card__use">Best for: hero intro, splash screen</p>
+      <button class="btn" data-action="replay">Replay</button>
+    </div>
+  </section>
+
+  <!-- 02 — GROW IN -->
+  <section class="card" data-card="grow">
+    <div class="card__stage">
+      <div class="plate">
+        <span class="sprout sprout--1"></span>
+        <span class="sprout sprout--2"></span>
+        <span class="sprout sprout--3"></span>
+        <img src="assets/logo.png" alt="Grass Daddy logo" class="anim anim--grow">
+      </div>
+    </div>
+    <div class="card__info">
+      <p class="card__num">02</p>
+      <h2>Grow-In</h2>
+      <p>Blades sprout first, then the mark pushes up out of the ground with a soft, springy overshoot —
+        like it just grew there.</p>
+      <p class="card__use">Best for: page load, app splash</p>
+      <button class="btn" data-action="replay">Replay</button>
+    </div>
+  </section>
+
+  <!-- 03 — STAMP SPIN -->
+  <section class="card" data-card="stamp">
+    <div class="card__stage">
+      <div class="plate">
+        <span class="impact-ring"></span>
+        <img src="assets/logo.png" alt="Grass Daddy logo" class="anim anim--stamp">
+      </div>
+    </div>
+    <div class="card__info">
+      <p class="card__num">03</p>
+      <h2>Stamp Spin</h2>
+      <p>Drops in on an angle and lands hard with a little rotational overshoot and an impact ring —
+        confident, like a seal of approval.</p>
+      <p class="card__use">Best for: badge/certification moments, intros</p>
+      <button class="btn" data-action="replay">Replay</button>
+    </div>
+  </section>
+
+  <!-- 04 — STRIPE SWEEP -->
+  <section class="card" data-card="sweep">
+    <div class="card__stage">
+      <div class="plate plate--hover plate--ghost">
+        <img src="assets/logo-transparent.png" alt="Grass Daddy logo" class="anim anim--sweep-base">
+        <span class="sweep-light"></span>
+      </div>
+    </div>
+    <div class="card__info">
+      <p class="card__num">04</p>
+      <h2>Stripe Sweep</h2>
+      <p>Idle and still until touched — then a diagonal mower-stripe of light glides across the mark once.
+        Hover to try it.</p>
+      <p class="card__use">Best for: button/link hover, card hover states</p>
+      <button class="btn" data-action="sweep">Preview Sweep</button>
+    </div>
+  </section>
+
+  <!-- 05 — PULSE GLOW -->
+  <section class="card" data-card="glow">
+    <div class="card__stage">
+      <div class="plate plate--ghost">
+        <span class="glow-blob"></span>
+        <img src="assets/logo-transparent.png" alt="Grass Daddy logo" class="anim anim--glow">
+      </div>
+    </div>
+    <div class="card__info">
+      <p class="card__num">05</p>
+      <h2>Pulse Glow</h2>
+      <p>A continuous, slow breathing glow behind the mark — ambient and alive, never distracting.</p>
+      <p class="card__use">Best for: hero backdrop, waiting/idle states</p>
+      <button class="btn" data-action="toggle-loop">Pause</button>
+    </div>
+  </section>
+
+  <!-- 06 — TRIM LINE -->
+  <section class="card" data-card="trim">
+    <div class="card__stage">
+      <div class="plate">
+        <img src="assets/logo.png" alt="Grass Daddy logo" class="anim anim--trim">
+        <span class="trim-bar"></span>
+      </div>
+    </div>
+    <div class="card__info">
+      <p class="card__num">06</p>
+      <h2>Trim Line</h2>
+      <p>Reveals top-to-bottom behind a hedge-trimmer shear line, with tiny clippings falling away as it
+        passes.</p>
+      <p class="card__use">Best for: section reveals, transitions between pages</p>
+      <button class="btn" data-action="replay">Replay</button>
+    </div>
+  </section>
+
+  <!-- 07 — LOADER LOOP -->
+  <section class="card" data-card="loader">
+    <div class="card__stage">
+      <div class="plate plate--sm">
+        <svg class="loader-ring" viewBox="0 0 100 100" aria-hidden="true">
+          <circle cx="50" cy="50" r="44" />
+        </svg>
+        <img src="assets/logo.png" alt="Grass Daddy logo" class="anim anim--loader">
+      </div>
+    </div>
+    <div class="card__info">
+      <p class="card__num">07</p>
+      <h2>Loader Loop</h2>
+      <p>A compact spinner build — dashed ring orbits while the mark breathes gently in place. Reads
+        clearly even small.</p>
+      <p class="card__use">Best for: page/form loading spinner, favicon-scale use</p>
+      <button class="btn" data-action="toggle-loop">Pause</button>
+    </div>
+  </section>
+
+  <!-- 08 — DOCK TO NAV -->
+  <section class="card card--wide" data-card="dock">
+    <div class="card__stage card__stage--dock">
+      <div class="dock-frame">
+        <div class="dock-corner"></div>
+        <img src="assets/logo.png" alt="Grass Daddy logo" class="anim anim--dock">
+      </div>
+    </div>
+    <div class="card__info">
+      <p class="card__num">08</p>
+      <h2>Dock to Nav</h2>
+      <p>Opens big and centered like a proper hero entrance, holds a beat, then shrinks and slides home
+        into the nav corner — one continuous motion from "intro" to "in place."</p>
+      <p class="card__use">Best for: first-visit homepage load</p>
+      <button class="btn" data-action="replay">Replay</button>
+    </div>
+  </section>
+
+</main>
+
+<footer class="lab__foot">
+  <span>Grass Daddy — Motion Lab</span>
+  <span>Prototype for internal review, not part of the live site yet</span>
+</footer>
+
+<script src="js/logo-animations.js"></script>
+</body>
+</html>

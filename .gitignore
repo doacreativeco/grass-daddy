@@ -1,0 +1,18 @@
+# Dev tooling — screenshot/test scripts and their dependencies, not part of the deployed site
+_shot-tool/node_modules/
+_shot-tool/downloads/
+_shot-tool/*.png
+_shot-tool/*.jpg
+
+# Packaged/legacy build output — not the live site
+dist-mac/
+grass-daddy-mac.zip
+
+# OS/editor cruft
+.DS_Store
+Thumbs.db
+*.log
+
+# Local env files, if any ever get added
+.env
+.env.local

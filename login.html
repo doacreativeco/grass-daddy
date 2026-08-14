@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Owner Login — Grass Daddy Landscaping</title>
+<meta name="robots" content="noindex, nofollow">
+
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0A0B09">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="login-page">
+  <div class="login-page__card">
+    <a href="index.html" class="login-page__brand" aria-label="Grass Daddy — home">
+      <img src="assets/logo-transparent.png" alt="Grass Daddy Landscaping" width="840" height="840" decoding="async">
+    </a>
+    <h1>Owner Login</h1>
+    <p class="login-page__sub">Internal access only. Sign in with your email and password.</p>
+
+    <form class="login-page__form" id="loginForm" novalidate>
+      <label>
+        <span>Email</span>
+        <input type="email" id="loginEmail" name="email" autocomplete="username" placeholder="you@email.com" required>
+      </label>
+      <label>
+        <span>Password</span>
+        <input type="password" id="loginPassword" name="password" autocomplete="current-password" placeholder="••••••••" required>
+      </label>
+      <button type="submit" class="btn btn--solid btn--block">Log In</button>
+      <p class="login-page__error" id="loginError" role="alert" aria-live="polite"></p>
+    </form>
+
+    <a href="index.html" class="login-page__back">&larr; Back to site</a>
+  </div>
+</div>
+
+<script src="js/auth-guard.js"></script>
+<script src="js/login.js"></script>
+</body>
+</html>

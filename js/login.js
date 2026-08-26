@@ -17,6 +17,11 @@
 
   if (!form || !emailInput || !passInput || !errorEl || !auth) return;
 
+  if (auth.isAuthed()) {
+    window.location.replace(REDIRECT_TARGET);
+    return;
+  }
+
   function showError(message) {
     errorEl.textContent = message;
     errorEl.classList.add("is-visible");

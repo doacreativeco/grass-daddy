@@ -125,7 +125,7 @@
 
   function readLeads() {
     try {
-      var parsed = JSON.parse(window.localStorage.getItem(LEADS_KEY) || "[]");
+      var parsed = window.GDAuth.safeJsonParse(window.localStorage.getItem(LEADS_KEY) || "[]", []);
       return Array.isArray(parsed) ? parsed : [];
     } catch (err) {
       return [];
@@ -160,7 +160,12 @@
   function sanitizeImportedLead(raw) {
     if (!raw || typeof raw !== "object") return null;
     function str(value) {
-      return value === undefined || value === null ? "" : String(value).slice(0, IMPORT_STRING_MAX);
+      return String(value === undefined || value === null ? "" : value)
+        .replace(/[\u0000-\u001F\u007F]/g, " ")
+        .replace(/%0[ad]/gi, " ")
+        .replace(/\s+/g, " ")
+        .trim()
+        .slice(0, IMPORT_STRING_MAX);
     }
     var status = str(raw.status);
     if (STATUSES.indexOf(status) === -1) status = "New";

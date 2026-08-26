@@ -39,7 +39,7 @@
   function readArray(key) {
     try {
       var raw = window.localStorage.getItem(key);
-      var parsed = raw ? JSON.parse(raw) : [];
+      var parsed = window.GDAuth.safeJsonParse(raw, []);
       return Array.isArray(parsed) ? parsed : [];
     } catch (err) {
       return [];
@@ -284,7 +284,7 @@
     savePastClients(getPastClients().filter(function (p) { return p.key !== c.key; }));
     try {
       var raw = window.localStorage.getItem(RATES_KEY);
-      var rates = raw ? JSON.parse(raw) : {};
+      var rates = window.GDAuth.safeJsonParse(raw, {});
       if (rates && typeof rates === "object") {
         delete rates[c.key];
         window.localStorage.setItem(RATES_KEY, JSON.stringify(rates));

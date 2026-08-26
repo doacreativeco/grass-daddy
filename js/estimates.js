@@ -40,7 +40,7 @@
   function readArray(key) {
     try {
       var raw = window.localStorage.getItem(key);
-      var parsed = raw ? JSON.parse(raw) : [];
+      var parsed = window.GDAuth.safeJsonParse(raw, []);
       return Array.isArray(parsed) ? parsed : [];
     } catch (err) {
       return [];
@@ -52,7 +52,7 @@
   function readObject(key) {
     try {
       var raw = window.localStorage.getItem(key);
-      var parsed = raw ? JSON.parse(raw) : {};
+      var parsed = window.GDAuth.safeJsonParse(raw, {});
       return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
     } catch (err) {
       return {};

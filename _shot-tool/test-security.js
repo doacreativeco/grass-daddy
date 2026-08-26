@@ -166,6 +166,20 @@ async function clearStorage(page) {
   const authedAt = await page.evaluate(() => Number(window.localStorage.getItem("gdAdminAuthedAt")));
   assert(authedAt > 0 && Date.now() - authedAt < 5000, "login records a session timestamp for expiry checks");
 
+  await page.evaluate(() => {
+    var u = JSON.parse(window.localStorage.getItem("gdAuthUser") || "{}");
+    u.id = "izzy";
+    u.role = "admin";
+    window.localStorage.setItem("gdAuthUser", JSON.stringify(u));
+  });
+  const spoofedAdmin = await page.evaluate(() => window.GDAuth.isAdmin());
+  assert(!spoofedAdmin, "spoofing an admin role in localStorage does not grant admin");
+  await page.evaluate(() => {
+    var u = JSON.parse(window.localStorage.getItem("gdAuthUser") || "{}");
+    u.id = "denye";
+    window.localStorage.setItem("gdAuthUser", JSON.stringify(u));
+  });
+
   // ---------- session expiry: a stale timestamp bounces back to login ----------
   await page.evaluate(() => window.localStorage.setItem("gdAdminAuthedAt", String(Date.now() - 13 * 60 * 60 * 1000)));
   await page.goto(url("leads.html"), { waitUntil: "networkidle0" });

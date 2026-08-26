@@ -36,7 +36,7 @@
   function readArray(key) {
     try {
       var raw = window.localStorage.getItem(key);
-      var parsed = raw ? JSON.parse(raw) : [];
+      var parsed = (window.GDAuth && window.GDAuth.safeJsonParse) ? window.GDAuth.safeJsonParse(raw, []) : (raw ? JSON.parse(raw) : []);
       return Array.isArray(parsed) ? parsed : [];
     } catch (err) {
       return [];

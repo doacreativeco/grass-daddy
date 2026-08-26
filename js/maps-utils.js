@@ -53,7 +53,10 @@
 
   function readCache() {
     try {
-      var parsed = JSON.parse(window.localStorage.getItem(GEO_CACHE_KEY) || "{}");
+      var parsed = JSON.parse(window.localStorage.getItem(GEO_CACHE_KEY) || "{}", function (key, value) {
+        if (key === "__proto__" || key === "constructor" || key === "prototype") return undefined;
+        return value;
+      });
       if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return {};
       var out = {};
       Object.keys(parsed).forEach(function (key) {
@@ -126,7 +129,7 @@
     container.innerHTML =
       '<iframe class="prop-map__frame" title="' + escapeHtml(title || "Property map") +
       '" src="' + escapeHtml(src) +
-      '" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>' +
+      '" loading="lazy" referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe>' +
       (open && isAllowedOpenUrl(open)
         ? '<a class="prop-map__open" href="' + escapeHtml(open) + '" target="_blank" rel="noopener noreferrer">Open in Google Maps</a>'
         : "");

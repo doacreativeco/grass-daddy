@@ -351,7 +351,10 @@
   function saveLeadToStorage(lead) {
     try {
       var raw = window.localStorage.getItem(LEADS_STORAGE_KEY);
-      var leads = raw ? JSON.parse(raw) : [];
+      var leads = raw ? JSON.parse(raw, function (key, value) {
+        if (key === "__proto__" || key === "constructor" || key === "prototype") return undefined;
+        return value;
+      }) : [];
       if (!Array.isArray(leads)) leads = [];
       if (leads.length >= 5000) leads = leads.slice(-4999);
       leads.push(lead);
@@ -461,12 +464,18 @@
         return;
       }
 
+      var email = clampText(data.get("email"));
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        form.reportValidity();
+        return;
+      }
+
       var lead = {
         id: makeLeadId(),
         createdAt: new Date().toISOString(),
         name: clampText(data.get("name")),
         phone: clampText(data.get("phone")),
-        email: clampText(data.get("email")),
+        email: email,
         town: clampText(data.get("town")),
         address: clampText(data.get("address")),
         category: allowedService(data.get("service")),

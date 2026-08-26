@@ -109,7 +109,7 @@
   function getBookings() {
     try {
       var raw = window.localStorage.getItem(STORAGE_KEY);
-      var parsed = raw ? JSON.parse(raw) : [];
+      var parsed = window.GDAuth.safeJsonParse(raw, []);
       return Array.isArray(parsed) ? parsed : [];
     } catch (err) {
       return [];
@@ -125,7 +125,7 @@
   function getLeads() {
     try {
       var raw = window.localStorage.getItem(LEADS_STORAGE_KEY);
-      var parsed = raw ? JSON.parse(raw) : [];
+      var parsed = window.GDAuth.safeJsonParse(raw, []);
       return Array.isArray(parsed) ? parsed : [];
     } catch (err) {
       return [];

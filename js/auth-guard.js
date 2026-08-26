@@ -30,7 +30,7 @@
       aliases: [],
       name: "Denye",
       role: "admin",
-      passwordHash: "sha256:f9245e19e42f3a0e4fafc1f1c05ccdf1c57ba9261a69a98e9f02033e268b27e7"
+      passwordHash: "sha256:62e298c6bcbed9b4d7ba91a52b10a460c61f02ca16cc34f6fd2d5c049554ea46"
     },
     {
       id: "izzy",
@@ -38,7 +38,7 @@
       aliases: [],
       name: "Izzy",
       role: "owner",
-      passwordHash: "sha256:edf90c9dbbecc484d3507d19ab11d39e53ec3ed1c19e447fc229c0b008cc6721"
+      passwordHash: "sha256:400b56d87080f729d68c7c61244d511b5697cb09a4deaff23ca29be455bacce2"
     }
   ];
 
@@ -75,6 +75,8 @@
     return n.length >= 5 && n.length <= 120 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(n);
   }
 
+  var LOGIN_PEPPER = "gd-login-v1";
+
   function fallbackHash(text) {
     var hash = 0x811c9dc5;
     for (var i = 0; i < text.length; i++) {
@@ -84,21 +86,65 @@
     return "fnv1a:" + (hash >>> 0).toString(16);
   }
 
-  function hashPasscode(text) {
-    var value = String(text || "");
+  function digestPasscode(value) {
+    var text = String(value || "");
     if (window.crypto && window.crypto.subtle && window.isSecureContext !== false) {
       try {
-        var data = new TextEncoder().encode(value);
+        var data = new TextEncoder().encode(text);
         return window.crypto.subtle
           .digest("SHA-256", data)
           .then(function (buf) {
             var bytes = Array.from(new Uint8Array(buf));
             return "sha256:" + bytes.map(function (b) { return b.toString(16).padStart(2, "0"); }).join("");
           })
-          .catch(function () { return fallbackHash(value); });
+          .catch(function () { return fallbackHash(text); });
       } catch (err) {}
     }
-    return Promise.resolve(fallbackHash(value));
+    return Promise.resolve(fallbackHash(text));
+  }
+
+  function hashPasscode(text) {
+    return digestPasscode(LOGIN_PEPPER + "\0" + String(text || ""));
+  }
+
+  function hashPasscodeLegacy(text) {
+    return digestPasscode(String(text || ""));
+  }
+
+  function hashesEqual(a, b) {
+    a = String(a || "");
+    b = String(b || "");
+    if (a.length !== b.length) return false;
+    var diff = 0;
+    for (var i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+    return diff === 0;
+  }
+
+  function safeJsonParse(raw, fallback) {
+    if (raw == null || raw === "") return fallback;
+    try {
+      var parsed = JSON.parse(String(raw), function (key, value) {
+        if (key === "__proto__" || key === "constructor" || key === "prototype") return undefined;
+        return value;
+      });
+      return parsed === undefined ? fallback : parsed;
+    } catch (err) {
+      return fallback;
+    }
+  }
+
+  function accountById(id) {
+    if (!id) return null;
+    for (var i = 0; i < ACCOUNTS.length; i++) {
+      if (ACCOUNTS[i].id === id) return ACCOUNTS[i];
+    }
+    return null;
+  }
+
+  function safePageRedirect(target) {
+    var t = String(target || "login.html");
+    if (!/^[a-z0-9][a-z0-9._-]*\.html$/i.test(t)) return "login.html";
+    return t;
   }
 
   function copyStringMap(parsed) {
@@ -115,7 +161,7 @@
     var store = ls();
     if (!store) return Object.create(null);
     try {
-      return copyStringMap(JSON.parse(store.getItem(PASSWORDS_KEY) || "{}"));
+      return copyStringMap(safeJsonParse(store.getItem(PASSWORDS_KEY) || "{}", {}));
     } catch (err) {
       return Object.create(null);
     }
@@ -131,7 +177,7 @@
     var store = ls();
     if (!store) return Object.create(null);
     try {
-      return copyStringMap(JSON.parse(store.getItem(EMAILS_KEY) || "{}"));
+      return copyStringMap(safeJsonParse(store.getItem(EMAILS_KEY) || "{}", {}));
     } catch (err) {
       return Object.create(null);
     }
@@ -170,9 +216,18 @@
     if (!account) return Promise.resolve(null);
     var candidate = String(password || "");
     var stored = storedHashFor(account);
-    var expected = stored ? Promise.resolve(stored) : Promise.resolve(account.passwordHash);
-    return Promise.all([hashPasscode(candidate), expected]).then(function (pair) {
-      return pair[0] === pair[1] ? publicUser(account) : null;
+    var expected = stored || account.passwordHash;
+    return Promise.all([hashPasscode(candidate), hashPasscodeLegacy(candidate)]).then(function (pair) {
+      var peppered = pair[0];
+      var legacy = pair[1];
+      if (hashesEqual(peppered, expected)) return publicUser(account);
+      if (hashesEqual(legacy, expected)) {
+        var map = readPasswordMap();
+        map[account.id] = peppered;
+        writePasswordMap(map);
+        return publicUser(account);
+      }
+      return null;
     });
   }
 
@@ -252,13 +307,9 @@
     if (!isAuthed()) return null;
     var store = ls();
     if (!store) return null;
-    try {
-      var parsed = JSON.parse(store.getItem(USER_KEY) || "null");
-      if (!parsed || !parsed.id || !parsed.role) return null;
-      return parsed;
-    } catch (err) {
-      return null;
-    }
+    var parsed = safeJsonParse(store.getItem(USER_KEY), null);
+    var account = accountById(parsed && parsed.id);
+    return account ? publicUser(account) : null;
   }
 
   function isAdmin() {
@@ -277,13 +328,8 @@
     var at = Number(store.getItem(AUTHED_AT_KEY));
     if (!at || isNaN(at)) return false;
     if (Date.now() - at > SESSION_MAX_AGE_MS) return false;
-    try {
-      var parsed = JSON.parse(store.getItem(USER_KEY) || "null");
-      if (!parsed || !parsed.id) return false;
-    } catch (err) {
-      return false;
-    }
-    return true;
+    var parsed = safeJsonParse(store.getItem(USER_KEY), null);
+    return !!(parsed && accountById(parsed.id));
   }
 
   function markLoggedIn(user) {
@@ -312,7 +358,7 @@
         store.removeItem(USER_KEY);
       } catch (err) {}
     }
-    window.location.replace(redirectTo || "login.html");
+    window.location.replace(safePageRedirect(redirectTo));
   }
 
   function requireAuth() {
@@ -336,6 +382,7 @@
     getLockoutRemainingMs: getLockoutRemainingMs,
     recordFailedAttempt: recordFailedAttempt,
     clearFailedAttempts: clearFailedAttempts,
+    safeJsonParse: safeJsonParse,
     SESSION_MAX_AGE_MS: SESSION_MAX_AGE_MS
   };
 

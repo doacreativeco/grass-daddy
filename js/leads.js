@@ -114,13 +114,23 @@
   }
 
   function telHref(phone) {
-    var digits = String(phone || "").replace(/[^\d+]/g, "");
-    return digits ? "tel:" + digits : "";
+    var raw = String(phone || "").trim();
+    var plus = raw.charAt(0) === "+";
+    var d = raw.replace(/[^\d]/g, "");
+    if (d.length < 7 || d.length > 15) return "";
+    return "tel:" + (plus ? "+" : "") + d;
   }
 
   function smsHref(phone) {
-    var digits = String(phone || "").replace(/[^\d+]/g, "");
-    return digits ? "sms:" + digits : "";
+    var href = telHref(phone);
+    return href ? "sms:" + href.slice(4) : "";
+  }
+
+  function mailtoHref(email) {
+    var e = String(email || "").trim();
+    if (/[\u0000-\u001F\u007F<>\"']/.test(e)) return "";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e) || e.length > 120) return "";
+    return "mailto:" + encodeURIComponent(e).replace(/%40/g, "@");
   }
 
   function todayIso() {
@@ -328,9 +338,10 @@
         var contactBits = [];
         var tel = telHref(lead.phone);
         var sms = smsHref(lead.phone);
-        if (tel) contactBits.push('<a href="' + tel + '">Call ' + escapeHtml(lead.phone) + "</a>");
-        if (sms) contactBits.push('<a href="' + sms + '">Text</a>');
-        if (lead.email) contactBits.push('<a href="mailto:' + escapeHtml(lead.email) + '">' + escapeHtml(lead.email) + "</a>");
+        var mail = mailtoHref(lead.email);
+        if (tel) contactBits.push('<a href="' + escapeHtml(tel) + '">Call ' + escapeHtml(lead.phone) + "</a>");
+        if (sms) contactBits.push('<a href="' + escapeHtml(sms) + '">Text</a>');
+        if (mail) contactBits.push('<a href="' + escapeHtml(mail) + '">' + escapeHtml(lead.email) + "</a>");
         if (lead.town) contactBits.push("<span>" + escapeHtml(lead.town) + "</span>");
         if (lead.address) contactBits.push("<span>" + escapeHtml(lead.address) + "</span>");
 
@@ -480,8 +491,8 @@
         (l.message ? " — " + escapeHtml(String(l.message).slice(0, 90)) : "") +
         "</p></div>" +
         '<div class="leads-new__actions">' +
-        (tel ? '<a class="crm-action" href="' + tel + '">Call</a>' : "") +
-        (sms ? '<a class="crm-action" href="' + sms + '">Text</a>' : "") +
+        (tel ? '<a class="crm-action" href="' + escapeHtml(tel) + '">Call</a>' : "") +
+        (sms ? '<a class="crm-action" href="' + escapeHtml(sms) + '">Text</a>' : "") +
         '<button type="button" class="crm-action" data-log-new="' + escapeHtml(l.id) + '">Log</button>' +
         "</div></article>"
       );

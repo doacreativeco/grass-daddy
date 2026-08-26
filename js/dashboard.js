@@ -75,12 +75,15 @@
     });
   }
   function telHref(phone) {
-    var digits = String(phone || "").replace(/[^\d+]/g, "");
-    return digits ? "tel:" + digits : "";
+    var raw = String(phone || "").trim();
+    var plus = raw.charAt(0) === "+";
+    var d = raw.replace(/[^\d]/g, "");
+    if (d.length < 7 || d.length > 15) return "";
+    return "tel:" + (plus ? "+" : "") + d;
   }
   function smsHref(phone) {
-    var digits = String(phone || "").replace(/[^\d+]/g, "");
-    return digits ? "sms:" + digits : "";
+    var href = telHref(phone);
+    return href ? "sms:" + href.slice(4) : "";
   }
   function formatMoney(value) {
     if (value === undefined || value === null || value === "") return "";
@@ -173,8 +176,8 @@
     var bits = [];
     var tel = telHref(phone);
     var sms = smsHref(phone);
-    if (tel) bits.push('<a class="crm-action ' + cls + '" href="' + tel + '">Call</a>');
-    if (sms) bits.push('<a class="crm-action ' + cls + '" href="' + sms + '">Text</a>');
+    if (tel) bits.push('<a class="crm-action ' + cls + '" href="' + escapeHtml(tel) + '">Call</a>');
+    if (sms) bits.push('<a class="crm-action ' + cls + '" href="' + escapeHtml(sms) + '">Text</a>');
     return bits.join("");
   }
 

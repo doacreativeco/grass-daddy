@@ -5,6 +5,15 @@
 
   var LEADS_KEY = "grassDaddyLeads";
   var STATUSES = ["New", "Contacted", "Quoted", "Won", "Lost"];
+  var CATEGORIES = [
+    "Lawn Maintenance",
+    "Landscape Design & Install",
+    "Hardscaping & Stonework",
+    "Spring / Fall Cleanup",
+    "Irrigation & Drainage",
+    "Free Consultation",
+    "Something else"
+  ];
   var ACTIVITY_TYPES = { call: true, text: true, quote: true, visit: true, note: true };
   var IMPORT_MAX_FILE_BYTES = 5 * 1024 * 1024;
   var IMPORT_MAX_LEADS_TOTAL = 5000;
@@ -174,6 +183,8 @@
         activities.push({ id: makeActivityId(), at: at, type: type, text: str(item.text) });
       });
     }
+    var category = str(raw.category);
+    if (CATEGORIES.indexOf(category) === -1) category = "Something else";
     return {
       id: makeLeadId(),
       createdAt: createdAt,
@@ -182,7 +193,7 @@
       email: str(raw.email),
       town: str(raw.town),
       address: str(raw.address),
-      category: str(raw.category) || "Something else",
+      category: category,
       message: str(raw.message),
       status: status,
       source: str(raw.source) || "Imported backup",
@@ -208,7 +219,10 @@
     var reader = new FileReader();
     reader.onload = function () {
       try {
-        var parsed = JSON.parse(reader.result);
+        var parsed = JSON.parse(reader.result, function (key, value) {
+          if (key === "__proto__" || key === "constructor" || key === "prototype") return undefined;
+          return value;
+        });
         if (!Array.isArray(parsed)) throw new Error("not-array");
         var existing = readLeads();
         var room = Math.max(IMPORT_MAX_LEADS_TOTAL - existing.length, 0);

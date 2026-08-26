@@ -7,8 +7,13 @@
   display: flex;
   align-items: stretch;
   min-height: 100vh;
+  min-height: 100dvh;
   background: var(--grey-100);
   overflow-x: hidden;
+}
+.gd-app.is-nav-open{
+  overflow: hidden;
+  height: 100dvh;
 }
 
 .gd-sidebar{
@@ -21,8 +26,12 @@
   position: sticky;
   top: 0;
   height: 100vh;
+  height: 100dvh;
   z-index: 50;
   border-right: 1px solid rgba(255,255,255,.06);
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
 }
 .gd-sidebar__brand{
   display: flex;
@@ -144,6 +153,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .gd-topbar{
@@ -154,14 +164,14 @@
   align-items: center;
   gap: 14px;
   min-height: 56px;
-  padding: 8px 20px;
+  padding: calc(8px + env(safe-area-inset-top, 0px)) calc(20px + env(safe-area-inset-right, 0px)) 8px 20px;
   background: #fff;
   border-bottom: 1px solid var(--grey-300);
 }
 .gd-topbar__menu{
   display: none;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   align-items: center;
   justify-content: center;
   border-radius: 8px;
@@ -175,11 +185,11 @@
 }
 .gd-topbar__search input{
   width: 100%;
-  height: 38px;
+  height: 44px;
   border: 1px solid var(--grey-300);
   border-radius: 999px;
   padding: 0 16px 0 40px;
-  font-size: 13.5px;
+  font-size: 16px;
   background: var(--grey-100) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%238B9083' stroke-width='1.8'%3E%3Ccircle cx='7' cy='7' r='5'/%3E%3Cpath d='M11 11l3.5 3.5' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat 14px 50%;
   color: var(--ink);
 }
@@ -251,11 +261,11 @@
 }
 .cust-list__search{
   width: 100%;
-  height: 36px;
+  height: 44px;
   border: 1px solid var(--grey-300);
   border-radius: 8px;
   padding: 0 12px;
-  font-size: 13px;
+  font-size: 16px;
   background: var(--grey-100);
 }
 .cust-list__filters{
@@ -739,6 +749,13 @@
   .gd-app.is-nav-open .gd-sidebar-backdrop{ display: block; }
   .gd-topbar__menu{ display: flex; }
   .gd-topbar__hint{ display: none; }
+  .gd-nav__link,
+  .gd-app .leads-header__nav-link,
+  .gd-app .leads-header__settings,
+  .gd-app .leads-header__logout,
+  .gd-app .leads-header__back{
+    min-height: 44px;
+  }
 }
 
 @media print{

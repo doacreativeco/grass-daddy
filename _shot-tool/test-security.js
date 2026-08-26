@@ -1,3 +1,4 @@
+const fs = require("fs");
 const puppeteer = require("puppeteer-core");
 const path = require("path");
 
@@ -33,11 +34,16 @@ async function clearStorage(page) {
 }
 
 (async () => {
+  const authSrc = fs.readFileSync(path.resolve(__dirname, "..", "js", "auth-guard.js"), "utf8");
+  assert(!/password:\s*["']Denyel08!/.test(authSrc), "auth-guard.js does not ship the admin password in plaintext");
+  assert(!/password:\s*["']izzy123/.test(authSrc), "auth-guard.js does not ship the owner password in plaintext");
+  assert(/passwordHash:\s*"sha256:/.test(authSrc), "auth-guard.js stores default credentials as SHA-256 hashes");
+
   const browser = await puppeteer.launch({ executablePath: EDGE_PATH, headless: "new", defaultViewport: { width: 1400, height: 1000 } });
   const page = await browser.newPage();
 
   // ---------- CSP: no violations across every real page ----------
-  const pages = ["index.html", "team.html", "404.html", "login.html"];
+  const pages = ["index.html", "team.html", "404.html", "login.html", "privacy.html"];
   for (const p of pages) {
     const violations = [];
     const handler = (msg) => { if (/Content Security Policy/i.test(msg.text())) violations.push(msg.text()); };
@@ -98,6 +104,7 @@ async function clearStorage(page) {
     await wait(300);
     const leadsAfterReal = await page.evaluate(() => JSON.parse(window.localStorage.getItem("grassDaddyLeads") || "[]"));
     assert(leadsAfterReal.length === 1 && leadsAfterReal[0].name === "Real Client", "real submission saves exactly one lead");
+    assert(leadsAfterReal[0].address === "", "optional address is stored empty when the visitor skips it");
     const fallbackHref = await page.$eval("#formMailtoFallback", (el) => el.getAttribute("href"));
     assert(fallbackHref.indexOf("mailto:Grass_Daddy%40yahoo.com") === 0, "mailto fallback link is set with the owner's email: " + fallbackHref);
     assert(fallbackHref.indexOf("Real%20Client") !== -1 || decodeURIComponent(fallbackHref).indexOf("Real Client") !== -1, "mailto body includes the submitted name");

@@ -30,7 +30,7 @@
       aliases: [],
       name: "Denye",
       role: "admin",
-      password: "Denyel08!"
+      passwordHash: "sha256:f9245e19e42f3a0e4fafc1f1c05ccdf1c57ba9261a69a98e9f02033e268b27e7"
     },
     {
       id: "izzy",
@@ -38,7 +38,7 @@
       aliases: [],
       name: "Izzy",
       role: "owner",
-      password: "izzy123"
+      passwordHash: "sha256:edf90c9dbbecc484d3507d19ab11d39e53ec3ed1c19e447fc229c0b008cc6721"
     }
   ];
 
@@ -101,14 +101,23 @@
     return Promise.resolve(fallbackHash(value));
   }
 
+  function copyStringMap(parsed) {
+    var out = Object.create(null);
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return out;
+    Object.keys(parsed).forEach(function (key) {
+      if (key === "__proto__" || key === "constructor" || key === "prototype") return;
+      if (typeof parsed[key] === "string") out[key] = parsed[key];
+    });
+    return out;
+  }
+
   function readPasswordMap() {
     var store = ls();
-    if (!store) return {};
+    if (!store) return Object.create(null);
     try {
-      var parsed = JSON.parse(store.getItem(PASSWORDS_KEY) || "{}");
-      return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+      return copyStringMap(JSON.parse(store.getItem(PASSWORDS_KEY) || "{}"));
     } catch (err) {
-      return {};
+      return Object.create(null);
     }
   }
 
@@ -120,12 +129,11 @@
 
   function readEmailMap() {
     var store = ls();
-    if (!store) return {};
+    if (!store) return Object.create(null);
     try {
-      var parsed = JSON.parse(store.getItem(EMAILS_KEY) || "{}");
-      return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+      return copyStringMap(JSON.parse(store.getItem(EMAILS_KEY) || "{}"));
     } catch (err) {
-      return {};
+      return Object.create(null);
     }
   }
 
@@ -162,7 +170,7 @@
     if (!account) return Promise.resolve(null);
     var candidate = String(password || "");
     var stored = storedHashFor(account);
-    var expected = stored ? Promise.resolve(stored) : hashPasscode(account.password);
+    var expected = stored ? Promise.resolve(stored) : Promise.resolve(account.passwordHash);
     return Promise.all([hashPasscode(candidate), expected]).then(function (pair) {
       return pair[0] === pair[1] ? publicUser(account) : null;
     });

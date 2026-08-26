@@ -239,13 +239,26 @@
     burger.addEventListener("click", function () {
       var open = mobileMenu.classList.toggle("is-open");
       burger.setAttribute("aria-expanded", open ? "true" : "false");
+      burger.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+      document.body.classList.toggle("nav-open", open);
     });
 
     mobileMenu.querySelectorAll("a").forEach(function (link) {
       link.addEventListener("click", function () {
         mobileMenu.classList.remove("is-open");
         burger.setAttribute("aria-expanded", "false");
+        burger.setAttribute("aria-label", "Open menu");
+        document.body.classList.remove("nav-open");
       });
+    });
+
+    window.addEventListener("resize", function () {
+      if (window.matchMedia("(min-width: 981px)").matches && mobileMenu.classList.contains("is-open")) {
+        mobileMenu.classList.remove("is-open");
+        burger.setAttribute("aria-expanded", "false");
+        burger.setAttribute("aria-label", "Open menu");
+        document.body.classList.remove("nav-open");
+      }
     });
   }
 
@@ -303,24 +316,44 @@
     statEls.forEach(function (el) { statIo.observe(el); });
   }
 
+  /* ---------- consulting video: skip autoplay on reduced-motion / save-data ---------- */
+  var consultVideo = document.querySelector(".consulting__video");
+  if (consultVideo) {
+    var reduceMotion = false;
+    var saveData = false;
+    try { reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (err) {}
+    try { saveData = !!(navigator.connection && navigator.connection.saveData); } catch (err2) {}
+    if (reduceMotion || saveData) {
+      consultVideo.removeAttribute("autoplay");
+      consultVideo.pause();
+    }
+  }
+
   /* ---------- quote form ---------- */
-  // NOTE: there's still no server backend here. Submissions are (a) saved into
-  // this browser's localStorage under the key the leads dashboard reads from,
-  // which only helps if the owner opens the dashboard in this same browser,
-  // and (b) handed to the visitor's own email client via a "mailto:" link so
-  // the request actually reaches Grass_Daddy@yahoo.com from any device. For
-  // silent, guaranteed delivery without relying on the visitor's mail client,
-  // swap this for a real POST to Formspree/Netlify Forms/your own API — see
-  // README.md for exact steps.
+  // Submissions are (a) saved into this browser's localStorage for the CRM,
+  // (b) POSTed to FormSubmit so they land in Grass_Daddy@yahoo.com, and
+  // (c) fall back to a mailto: link if that POST fails. The first FormSubmit
+  // delivery asks the owner to confirm the email address once.
   var LEADS_STORAGE_KEY = "grassDaddyLeads";
   var OWNER_EMAIL = "Grass_Daddy@yahoo.com";
+  var FORM_ENDPOINT = "https://formsubmit.co/ajax/" + encodeURIComponent(OWNER_EMAIL);
   var MAX_FIELD_LENGTH = 1000;
+  var ALLOWED_SERVICES = [
+    "Lawn Maintenance",
+    "Landscape Design & Install",
+    "Hardscaping & Stonework",
+    "Spring / Fall Cleanup",
+    "Irrigation & Drainage",
+    "Free Consultation",
+    "Something else"
+  ];
 
   function saveLeadToStorage(lead) {
     try {
       var raw = window.localStorage.getItem(LEADS_STORAGE_KEY);
       var leads = raw ? JSON.parse(raw) : [];
       if (!Array.isArray(leads)) leads = [];
+      if (leads.length >= 5000) leads = leads.slice(-4999);
       leads.push(lead);
       window.localStorage.setItem(LEADS_STORAGE_KEY, JSON.stringify(leads));
       return true;
@@ -334,11 +367,21 @@
   }
 
   function clampText(value) {
-    return (value || "").toString().trim().slice(0, MAX_FIELD_LENGTH);
+    return (value || "").toString()
+      .replace(/[\u0000-\u001F\u007F]/g, " ")
+      .replace(/%0[ad]/gi, " ")
+      .replace(/\s+/g, " ")
+      .trim()
+      .slice(0, MAX_FIELD_LENGTH);
   }
 
-  function emailLeadToOwner(lead) {
-    var subject = "New quote request — " + (lead.name || "Website visitor");
+  function allowedService(value) {
+    var v = clampText(value);
+    return ALLOWED_SERVICES.indexOf(v) !== -1 ? v : "Something else";
+  }
+
+  function mailtoHrefFor(lead) {
+    var subject = "New quote request — " + (lead.name || "Website visitor").slice(0, 80);
     var bodyLines = [
       "New free-quote request from the Grass Daddy website:",
       "",
@@ -346,24 +389,56 @@
       "Phone: " + lead.phone,
       "Email: " + lead.email,
       "Town: " + lead.town,
+      "Address: " + (lead.address || "(not given)"),
       "Service: " + lead.category,
       "",
       "Message:",
       lead.message || "(none)"
     ];
-    var mailto =
-      "mailto:" + encodeURIComponent(OWNER_EMAIL) +
+    return "mailto:" + encodeURIComponent(OWNER_EMAIL) +
       "?subject=" + encodeURIComponent(subject) +
       "&body=" + encodeURIComponent(bodyLines.join("\n"));
+  }
 
+  function setMailtoFallback(lead) {
     var fallbackLink = document.getElementById("formMailtoFallback");
-    if (fallbackLink) fallbackLink.href = mailto;
+    if (fallbackLink) fallbackLink.href = mailtoHrefFor(lead);
+  }
 
+  function openMailto(lead) {
+    setMailtoFallback(lead);
     try {
-      window.location.href = mailto;
-    } catch (err) {
-      // Ignored — the visible fallback link in the success message still works.
-    }
+      window.location.href = mailtoHrefFor(lead);
+    } catch (err) {}
+  }
+
+  function postLeadToInbox(lead) {
+    if (!window.fetch) return Promise.resolve(false);
+    var payload = {
+      name: lead.name,
+      phone: lead.phone,
+      email: lead.email,
+      town: lead.town,
+      address: lead.address || "(not given)",
+      service: lead.category,
+      message: lead.message || "(none)",
+      _subject: "New quote request — " + (lead.name || "Website visitor"),
+      _template: "box",
+      _captcha: "false",
+      _replyto: lead.email
+    };
+    return fetch(FORM_ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json"
+      },
+      body: JSON.stringify(payload)
+    }).then(function (res) {
+      return res.ok;
+    }).catch(function () {
+      return false;
+    });
   }
 
   var form = document.getElementById("quoteForm");
@@ -393,18 +468,22 @@
         phone: clampText(data.get("phone")),
         email: clampText(data.get("email")),
         town: clampText(data.get("town")),
-        category: clampText(data.get("service")) || "Something else",
+        address: clampText(data.get("address")),
+        category: allowedService(data.get("service")),
         message: clampText(data.get("message")),
         status: "New",
         source: "Website — Free Quote form"
       };
 
       saveLeadToStorage(lead);
-      emailLeadToOwner(lead);
-
+      setMailtoFallback(lead);
       form.classList.add("is-sent");
       var success = form.querySelector(".form__success");
       if (success && success.focus) success.focus();
+
+      postLeadToInbox(lead).then(function (delivered) {
+        if (!delivered) openMailto(lead);
+      });
     });
   }
 })();

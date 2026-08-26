@@ -13,6 +13,9 @@ grass-daddy-mac.zip
 Thumbs.db
 *.log
 
+# Test screenshots — not part of the live site
+assets/check-*.png
+
 # Local env files, if any ever get added
 .env
 .env.local

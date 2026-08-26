@@ -95,12 +95,21 @@
     return String(phone || "").replace(/[^\d]/g, "");
   }
   function telHref(phone) {
-    var d = String(phone || "").replace(/[^\d+]/g, "");
-    return d ? "tel:" + d : "";
+    var raw = String(phone || "").trim();
+    var plus = raw.charAt(0) === "+";
+    var d = raw.replace(/[^\d]/g, "");
+    if (d.length < 7 || d.length > 15) return "";
+    return "tel:" + (plus ? "+" : "") + d;
   }
   function smsHref(phone) {
-    var d = String(phone || "").replace(/[^\d+]/g, "");
-    return d ? "sms:" + d : "";
+    var href = telHref(phone);
+    return href ? "sms:" + href.slice(4) : "";
+  }
+  function mailtoHref(email) {
+    var e = String(email || "").trim();
+    if (/[\u0000-\u001F\u007F<>\"']/.test(e)) return "";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e) || e.length > 120) return "";
+    return "mailto:" + encodeURIComponent(e).replace(/%40/g, "@");
   }
   function clientKeyFrom(name, phone, leadId) {
     if (leadId) return "lead:" + leadId;
@@ -436,7 +445,7 @@
       '<div class="cust-grid">' +
       '<div class="cust-card"><h3>Contact</h3>' +
       (c.phone ? "<p><a href=\"" + escapeHtml(telHref(c.phone)) + "\">" + escapeHtml(c.phone) + "</a></p>" : "<p>—</p>") +
-      (c.email ? "<p><a href=\"mailto:" + escapeHtml(c.email) + "\">" + escapeHtml(c.email) + "</a></p>" : "") +
+      (mailtoHref(c.email) ? "<p><a href=\"" + escapeHtml(mailtoHref(c.email)) + "\">" + escapeHtml(c.email) + "</a></p>" : "") +
       "</div>" +
       '<div class="cust-card"><h3>Property</h3>' +
       "<p>" + escapeHtml([c.address, c.town].filter(Boolean).join(", ") || "—") + "</p>" +

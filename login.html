@@ -3,13 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com https://nominatim.openstreetmap.org; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src https://www.google.com https://maps.google.com https://www.openstreetmap.org; worker-src 'none'; manifest-src 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>Owner Login — Grass Daddy Landscaping</title>
 <meta name="robots" content="noindex, nofollow">
 
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#0A0B09">
+<meta name="format-detection" content="telephone=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GD Leads">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
@@ -31,7 +36,7 @@
     <form class="login-page__form" id="loginForm" novalidate>
       <label>
         <span>Email</span>
-        <input type="email" id="loginEmail" name="email" autocomplete="username" placeholder="you@email.com" required>
+        <input type="email" id="loginEmail" name="email" autocomplete="username" inputmode="email" enterkeyhint="next" placeholder="you@email.com" required>
       </label>
       <label>
         <span>Password</span>

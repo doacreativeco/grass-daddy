@@ -1,7 +1,6 @@
 Contact: mailto:Grass_Daddy@yahoo.com
 Preferred-Languages: en
-Canonical: https://www.YOURDOMAIN.com/.well-known/security.txt
-Policy: https://www.YOURDOMAIN.com/security-policy
+Expires: 2027-08-26T00:00:00.000Z
 
 # This is a small business marketing/dashboard site with no server backend.
 # If you find a security issue, please email us rather than filing a public

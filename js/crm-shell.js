@@ -63,6 +63,16 @@
   function ensurePreviewLeads() {
     try {
       if (window.localStorage.getItem(PREVIEW_FLAG) === "1") return;
+      var existing = window.localStorage.getItem(LEADS_KEY);
+      if (existing) {
+        window.localStorage.setItem(PREVIEW_FLAG, "1");
+        return;
+      }
+      var host = window.location.hostname;
+      if (host !== "localhost" && host !== "127.0.0.1") {
+        window.localStorage.setItem(PREVIEW_FLAG, "1");
+        return;
+      }
       writePreviewLeads();
     } catch (err) {}
   }
@@ -97,6 +107,9 @@
   }
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape" && document.body.classList.contains("is-nav-open")) setNavOpen(false);
+  });
+  window.addEventListener("resize", function () {
+    if (window.matchMedia("(min-width: 901px)").matches) setNavOpen(false);
   });
 
   function isCustomersPage() {

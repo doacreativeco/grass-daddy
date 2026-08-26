@@ -13,4 +13,4 @@ Disallow: /_shot-tool/
 Disallow: /logo-animations.html
 Disallow: /grass-daddy-mac.zip
 
-Sitemap: https://www.YOURDOMAIN.com/sitemap.xml
+Sitemap: https://doacreativeco.github.io/grass-daddy/sitemap.xml

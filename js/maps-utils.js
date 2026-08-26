@@ -54,14 +54,43 @@
   function readCache() {
     try {
       var parsed = JSON.parse(window.localStorage.getItem(GEO_CACHE_KEY) || "{}");
-      return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+      if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return {};
+      var out = {};
+      Object.keys(parsed).forEach(function (key) {
+        if (key === "__proto__" || key === "constructor" || key === "prototype") return;
+        var row = parsed[key];
+        if (!row || !isFinite(row.lat) || !isFinite(row.lng)) return;
+        if (row.lat < -90 || row.lat > 90 || row.lng < -180 || row.lng > 180) return;
+        out[key] = { lat: Number(row.lat), lng: Number(row.lng) };
+      });
+      return out;
     } catch (err) {
       return {};
     }
   }
 
   function writeCache(cache) {
-    try { window.localStorage.setItem(GEO_CACHE_KEY, JSON.stringify(cache)); } catch (err) {}
+    try {
+      var keys = Object.keys(cache);
+      if (keys.length > 250) {
+        var keep = keys.slice(-200);
+        var trimmed = {};
+        keep.forEach(function (k) { trimmed[k] = cache[k]; });
+        cache = trimmed;
+      }
+      window.localStorage.setItem(GEO_CACHE_KEY, JSON.stringify(cache));
+    } catch (err) {}
+  }
+
+  function isAllowedFrameSrc(src) {
+    var s = String(src || "");
+    return s.indexOf("https://maps.google.com/maps?") === 0 ||
+      s.indexOf("https://www.openstreetmap.org/export/embed.html?") === 0;
+  }
+
+  function isAllowedOpenUrl(src) {
+    var s = String(src || "");
+    return s.indexOf("https://maps.google.com/?") === 0;
   }
 
   function geocode(query) {
@@ -79,6 +108,7 @@
       if (!rows || !rows[0]) return null;
       var pt = { lat: Number(rows[0].lat), lng: Number(rows[0].lon) };
       if (!isFinite(pt.lat) || !isFinite(pt.lng)) return null;
+      if (pt.lat < -90 || pt.lat > 90 || pt.lng < -180 || pt.lng > 180) return null;
       cache[key] = pt;
       writeCache(cache);
       return pt;
@@ -89,12 +119,16 @@
 
   function paintFrame(container, src, open, title) {
     if (!container) return;
+    if (!isAllowedFrameSrc(src)) {
+      container.innerHTML = '<p class="crm-empty">Map unavailable.</p>';
+      return;
+    }
     container.innerHTML =
       '<iframe class="prop-map__frame" title="' + escapeHtml(title || "Property map") +
       '" src="' + escapeHtml(src) +
       '" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>' +
-      (open
-        ? '<a class="prop-map__open" href="' + escapeHtml(open) + '" target="_blank" rel="noopener">Open in Google Maps</a>'
+      (open && isAllowedOpenUrl(open)
+        ? '<a class="prop-map__open" href="' + escapeHtml(open) + '" target="_blank" rel="noopener noreferrer">Open in Google Maps</a>'
         : "");
   }
 

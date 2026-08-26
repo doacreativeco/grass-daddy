@@ -7,6 +7,7 @@ A brand site + internal dashboard for **Grass Daddy**, a Connecticut lawn care &
 ```
 index.html        One-page brand site (Nav → Hero → Services → Proof → Consulting → Contact → Footer)
 team.html          Standalone "Our Team" page
+privacy.html       Short privacy note for the quote form
 404.html           Branded 404 page
 login.html         Owner login gate for the internal dashboard
 dashboard.html     CRM dashboard (KPIs, today's route, follow-ups, new leads, rest of week)
@@ -14,10 +15,11 @@ leads.html         Leads inbox (pipeline, activity log, property notes, search/s
 calendar.html      Booking calendar (month grid, agenda, recurrence, mark done, payment)
 customers.html     Customer 360 (contact, property, jobs, estimates, invoices, notes)
 estimates.html     Quotes from the price list; convert accepted estimates to invoices
-billing.html       Price list, per-client rates, and invoices
+billing.html       Invoices
+prices.html        Price list
 css/styles.css     Design system: tokens, layout, animation, all page styles
 css/crm.css        GorillaDesk-inspired CRM shell (sidebar, top search, customer record)
-js/main.js         Public site: nav, mobile menu, scroll reveal, stat count-up, service modal, quote form
+js/main.js         Public site: nav, quote form, FormSubmit delivery
 js/auth-guard.js   Shared login/session/lockout helpers used by login + dashboard pages
 js/modal-utils.js  Shared focus-trap helper for all modals
 js/crm-shell.js    CRM sidebar/search chrome
@@ -27,7 +29,12 @@ js/leads.js        Leads dashboard logic
 js/calendar.js     Calendar/booking logic
 js/customers.js    Customer 360 records
 js/estimates.js    Estimates and convert-to-invoice
-js/billing.js      Price list, per-client rates, and invoices
+js/billing.js      Invoices
+js/prices.js       Price list editor
+js/price-catalog.js Shared price catalog
+js/settings.js     CRM settings modal (email, password, backup)
+js/maps-utils.js   Property map pins
+js/work-convert.js Lead → customer conversion
 assets/            Images, video, icons
 robots.txt, sitemap.xml, manifest.webmanifest  SEO/PWA basics
 _headers, vercel.json  Security headers for hosts that support custom HTTP headers (Netlify/Cloudflare Pages, Vercel)
@@ -53,25 +60,21 @@ dist-mac/, grass-daddy-mac.zip  Old packaged build artifact — not the live sit
 
 This raises the bar above "trivially readable," but **anyone with browser devtools can still bypass it** (e.g. by setting `localStorage.gdAdminAuthed = "1"` directly), because there's nothing on a server to check against. Don't put anything in the dashboard you wouldn't be okay with a technically-savvy visitor eventually seeing. If this dashboard ever needs to hold real business-critical or customer-sensitive data long-term, move authentication to a real backend with server-side sessions (e.g. Netlify Identity, Auth0, or a small custom API).
 
-The default passcode is `grassdaddy2026` — change it from **Leads Dashboard → Settings** the first time you log in.
+Change the login password from **Settings** after the first sign-in. Default accounts are stored as SHA-256 hashes in `js/auth-guard.js`.
 
-## The public quote form: how leads actually reach you today
+## The public quote form
 
-There's still no backend, so a real visitor's form submission is handled two ways right now:
+A real visitor's quote is handled three ways:
 
-1. It's saved to **this browser's** `localStorage` (only useful if you personally submit a test lead and then open the dashboard in the same browser).
-2. It opens **your own email app** with a pre-filled message addressed to `Grass_Daddy@yahoo.com` via a `mailto:` link, so real quote requests actually land in your inbox from any visitor's device.
+1. Saved to **this browser's** `localStorage` (only useful if you open the CRM in that same browser).
+2. **Posted to [FormSubmit](https://formsubmit.co)** so it lands in `Grass_Daddy@yahoo.com` without opening the visitor's mail app. The **first** submission sends Izzy a one-time confirmation email — click that link or later quotes will not arrive.
+3. If that POST fails, the visitor's mail app opens with a pre-filled `mailto:` message, and the success screen still has a backup email link.
 
-The `mailto:` approach works with zero setup, but it depends on the visitor's device having a mail client configured, and a couple of extra clicks from them. For guaranteed, silent delivery straight to your inbox (or a spreadsheet), swap the form over to one of:
-
-- **[Formspree](https://formspree.io)** — free tier, no server needed. Sign up, get a form endpoint, change `js/main.js`'s submit handler to `fetch()` that URL instead of/alongside the current logic.
-- **Netlify Forms** — if you deploy on Netlify, add `data-netlify="true"` and a hidden `form-name` input to `#quoteForm` and Netlify captures submissions automatically, no JS changes required.
-
-The form already has a honeypot field (`name="company"`, visually hidden) to cut down on basic bot spam — keep that field in place if you change the submit handler.
+The form already has a honeypot field (`name="company"`) to cut down on basic bot spam.
 
 ## Security headers
 
-`index.html`/`team.html`/`login.html`/`dashboard.html`/`leads.html`/`calendar.html`/`billing.html`/`customers.html`/`estimates.html`/`404.html` all ship a `Content-Security-Policy` and `Referrer-Policy` via `<meta>` tags (works on any static host, no config needed). A couple of protections can only be set via real HTTP headers, not `<meta>`, so:
+`index.html`/`team.html`/`privacy.html`/`login.html`/`dashboard.html`/`leads.html`/`calendar.html`/`billing.html`/`customers.html`/`estimates.html`/`404.html` all ship a `Content-Security-Policy` and `Referrer-Policy` via `<meta>` tags (works on any static host, no config needed). A couple of protections can only be set via real HTTP headers, not `<meta>`, so:
 
 - **`_headers`** — picked up automatically by Netlify and Cloudflare Pages.
 - **`vercel.json`** — picked up automatically by Vercel.
@@ -79,9 +82,9 @@ The form already has a honeypot field (`name="company"`, visually hidden) to cut
 
 ## Before you launch
 
-1. **Domain** — swap every `YOURDOMAIN.com` placeholder (canonical URLs, `robots.txt`, `sitemap.xml`, `security.txt`, Open Graph tags) for the real domain.
-2. **Social links** — confirm the exact Facebook page URL for "Grass Daddy LLC" and Instagram handle `@GrassDaddyLandscaping`.
-3. **Lead delivery** — decide if the built-in `mailto:` fallback is good enough, or wire up Formspree/Netlify Forms (see above).
-4. **Dashboard passcode** — log in with the default passcode and change it immediately from Settings.
-5. **What to upload** — only deploy the actual site: `index.html`, `team.html`, `login.html`, `dashboard.html`, `leads.html`, `calendar.html`, `billing.html`, `customers.html`, `estimates.html`, `404.html`, `css/`, `js/`, `assets/`, `manifest.webmanifest`, `robots.txt`, `sitemap.xml`, `_headers`, `vercel.json`, `.well-known/`. Don't upload `_shot-tool/`, `dist-mac/`, `grass-daddy-mac.zip`, `logo-animations.html`, or this README.
-6. **Hosting** — Netlify, Vercel, Cloudflare Pages, or any static host. No build step required.
+1. **Domain** — public URLs currently point at the GitHub Pages site (`https://doacreativeco.github.io/grass-daddy/`). When you buy a custom domain, swap those in `index.html`, `team.html`, `privacy.html`, `robots.txt`, and `sitemap.xml`.
+2. **FormSubmit** — send one test quote, then confirm the activation email at `Grass_Daddy@yahoo.com`.
+3. **Social links** — confirm the exact Facebook page URL for "Grass Daddy LLC" and Instagram handle `@GrassDaddyLandscaping`.
+4. **Dashboard password** — log in and change it from Settings.
+5. **What to upload** — only deploy the actual site: `index.html`, `team.html`, `privacy.html`, `login.html`, `dashboard.html`, `leads.html`, `calendar.html`, `billing.html`, `prices.html`, `customers.html`, `estimates.html`, `404.html`, `css/`, `js/`, `assets/`, `manifest.webmanifest`, `robots.txt`, `sitemap.xml`, `_headers`, `vercel.json`, `.well-known/`. Don't upload `_shot-tool/`, `dist-mac/`, `grass-daddy-mac.zip`, `logo-animations.html`, or this README.
+6. **Hosting** — GitHub Pages is live. Netlify, Vercel, or Cloudflare Pages also work with no build step.
